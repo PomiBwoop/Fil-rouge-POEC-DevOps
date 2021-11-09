@@ -1,4 +1,4 @@
-# Group 1 : twitter static website app CICD
+# Group 2 : twitter static website app CICD
 
 ## 1- Goal
 The goal of this project is to verify your ability to automate build and deploy containerized applications.
