@@ -1,0 +1,106 @@
+Vagrant.configure("2") do |config|
+
+    ###
+    # manager
+    ###
+    
+    config.vm.define "manager" do |vagr|
+        vagr.vm.box = "debian/bullseye64"
+        vagr.vm.network "private_network", type: "static", ip: "192.168.99.1",
+            virtualbox__intnet: true
+        vagr.vm.hostname = "manager"
+        vagr.vm.provider "virtualbox" do |v|
+            v.name = "manager"
+            v.memory = 4096
+            v.cpus = 4
+        end
+        vagr.vm.provision :shell do |shell|
+            shell.path = "install_requirements.sh"
+            shell.args = ["manager"]
+        end
+    end
+
+
+    ###
+    # monitoring
+    ###
+    
+    config.vm.define "monitoring" do |vagr|
+        vagr.vm.box = "debian/bullseye64"
+        vagr.vm.network "private_network", type: "static", ip: "192.168.99.2",
+            virtualbox__intnet: true
+        vagr.vm.hostname = "monitoring"
+        vagr.vm.provider "virtualbox" do |v|
+            v.name = "monitoring"
+            v.memory = 4096
+            v.cpus = 4
+        end
+        vagr.vm.provision :shell do |shell|
+            shell.path = "install_requirements.sh"
+            shell.args = ["monitoring"]
+        end
+    end
+
+
+    ###
+    # staging
+    ###
+
+    config.vm.define "staging" do |vagr|
+        vagr.vm.box = "debian/bullseye64"
+        vagr.vm.network "private_network", type: "static", ip: "192.168.99.10",
+        virtualbox__intnet: true
+        vagr.vm.hostname = "staging"
+        vagr.vm.provider "virtualbox" do |v|
+            v.name = "staging"
+            v.memory = 2048
+            v.cpus = 2
+        end
+        vagr.vm.provision :shell do |shell|
+            shell.path = "install_requirements.sh"
+            shell.args = ["staging"]
+        end
+    end
+
+
+    ###
+    # preprod web
+    ###
+
+    config.vm.define "preprod" do |vagr|
+        vagr.vm.box = "debian/bullseye64"
+        vagr.vm.network "private_network", type: "static", ip: "192.168.99.20",
+        virtualbox__intnet: true
+        vagr.vm.hostname = "preprod"
+        vagr.vm.provider "virtualbox" do |v|
+            v.name = "preprod"
+            v.memory = 2048
+            v.cpus = 2
+        end
+        vagr.vm.provision :shell do |shell|
+            shell.path = "install_requirements.sh"
+            shell.args = ["preprod"]
+        end
+    end
+
+
+    ###
+    # prod web
+    ###
+
+    config.vm.define "prod" do |vagr|
+        vagr.vm.box = "debian/bullseye64"
+        vagr.vm.network "private_network", type: "static", ip: "192.168.99.30",
+        virtualbox__intnet: true
+        vagr.vm.hostname = "prod"
+        vagr.vm.provider "virtualbox" do |v|
+            v.name = "prod"
+            v.memory = 4096
+            v.cpus = 4
+        end
+        vagr.vm.provision :shell do |shell|
+            shell.path = "install_requirements.sh"
+            shell.args = ["prod"]
+        end
+    end
+end
