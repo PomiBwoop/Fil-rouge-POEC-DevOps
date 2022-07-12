@@ -91,7 +91,7 @@ Phase deploy review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://abdoulayemady-$CI_COMMIT_REF_NAME.herokuapp.com
-    on_stop: Stop review
+    on_stop: stop review
   only:
     - merge_requests
   script:
