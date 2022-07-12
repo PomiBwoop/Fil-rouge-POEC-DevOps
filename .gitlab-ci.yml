@@ -2,7 +2,7 @@
 ###### VARIABLES & MISE EN OEUVRE DOCKER IN DOCKER ##########
 #############################################################
 variables:
-    IMAGE_NAME: registry.gitlab.com/ib35/webtweet
+    IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
 
 
 image: docker:latest
@@ -68,9 +68,9 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet.tar
-    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - docker tag webtweet:v1.0.0 "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+#    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
