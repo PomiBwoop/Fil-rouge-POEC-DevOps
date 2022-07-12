@@ -1,0 +1,6 @@
+---
+- import_tasks: "pre_install.yml"
+
+- import_tasks: "install_docker.yml"
+
+- import_tasks: "install_docker_compose.yml"

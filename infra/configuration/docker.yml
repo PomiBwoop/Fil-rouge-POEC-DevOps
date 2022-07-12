@@ -1,0 +1,7 @@
+---
+- name: "Docker & Docker compose installation"
+  hosts: docker
+  become: yes
+  roles: 
+    - role: docker
+...
