@@ -13,7 +13,7 @@ stages:
   ######           PHASE DE BUILD         ######################
 docker-build:
   # Use the official docker image.
-  stage: build
+  stage: Build
   script:
     - docker build -t  webtweet:v1.0.0  ./app/
     - docker save webtweet:v1.0.0  > webtweet.tar
