@@ -1,0 +1,22 @@
+###### MISE EN OEUVRE DOCKER IN DOCKER ###############
+image: docker:latest
+services:
+  - name: docker:dind
+    alias: docker
+
+
+######     DIFFERENTES ETAPES DE LA CI-CD   ###############
+stages:
+  - Build
+
+
+  ######           PHASE DE BUILD         ######################
+docker-build:
+  # Use the official docker image.
+  stage: build
+  script:
+    - docker build -t  webtweet:v1.0.0  ./app/
+    - docker save webtweet:v1.0.0  > webtweet.tar
+  artifacts:
+    paths:
+      - webtweet.tar    
