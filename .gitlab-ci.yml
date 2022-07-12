@@ -81,6 +81,27 @@ Phase Release image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+#############################################################
+######   PHASE REVUE DEPLOIEMENT AVEC STOP REVIEW  ##########
+#############################################################
+Phase deploy review:
+  stage: Deploy review
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://abdoulayemady-$CI_COMMIT_REF_NAME.herokuapp.com
+    on_stop: Phase Stop review # see de label Phase Stop review BELOW
+  only:
+    - merge_requests
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create abdoulayemady-$CI_COMMIT_REF_NAME  || echo "project already exist"
+    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+
+
+
 
 
 #############################################################
@@ -101,27 +122,6 @@ Phase Stop review:
     - npm install -g heroku
     - heroku container:login
     - heroku apps:destroy -a abdoulayemady-$CI_COMMIT_REF_NAME -c abdoulayemady-$CI_COMMIT_REF_NAME
-
-
-
-#############################################################
-######   PHASE REVUE DEPLOIEMENT AVEC STOP REVIEW  ##########
-#############################################################
-Phase deploy review:
-  stage: Deploy review
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: https://abdoulayemady-$CI_COMMIT_REF_NAME.herokuapp.com
-    on_stop: stop review
-  only:
-    - merge_requests
-  script:
-    - apk --no-cache add npm
-    - npm install -g heroku
-    - heroku container:login
-    - heroku create abdoulayemady-$CI_COMMIT_REF_NAME  || echo "project already exist"
-    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
-    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
 
 
 
