@@ -1,11 +1,18 @@
-###### MISE EN OEUVRE DOCKER IN DOCKER ###############
+#############################################################
+###### VARIABLES & MISE EN OEUVRE DOCKER IN DOCKER ##########
+#############################################################
+variables:
+    IMAGE_NAME: registry.gitlab.com/ib35/webtweet
+
+
 image: docker:latest
 services:
   - name: docker:dind
     alias: docker
 
-
-######           FONCTION TEST DE TEMPLATE   ###############
+#############################################################
+######       FONCTION TEST DE TEMPLATE    ###################
+#############################################################
 .test_template: &test
   image: webtweet
   only:
@@ -15,15 +22,19 @@ services:
     - curl "https://$DOMAIN" | grep "Linux Tweet App!"  
 
 
-
-######     DIFFERENTES ETAPES DE LA CI-CD   ###############
+#############################################################
+######     DIFFERENTES ETAPES DE LA CI-CD   #################
+#############################################################
 stages:
   - Build
   - Test acceptance
+  - Release image
 
 
-  ######           PHASE DE BUILD         ######################
-docker-build:
+#############################################################
+######           PHASE DE BUILD         #####################
+#############################################################
+Phase Docker build:
   # Use the official docker image.
   stage: Build
   script:
@@ -34,8 +45,10 @@ docker-build:
       - webtweet.tar    
 
 
-######           PHASE DE TEST ET ACCEPTATION #############
-Test acceptance:
+#############################################################
+######      PHASE DE TEST ET ACCEPTATION     ################
+#############################################################
+Phase Test acceptance:
   # Official docker image.
   stage: Test acceptance
   script:
@@ -44,4 +57,19 @@ Test acceptance:
     - sleep 5
     - apk --no-cache add curl
     - curl "http://docker" | grep  "Linux Tweet App!"
+    - curl "http://docker" | grep  "You've successfully deployed the Linux tweet app! Why not let the world know?"
+
+
+#############################################################
+###### PHASE DE RELEASE DE L'IMAGE GITLAB REGISTRY ##########
+#############################################################
+Phase Release image:
+  stage: Release image
+  script:
+    - docker load < webtweet.tar
+    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+#    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+#    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
