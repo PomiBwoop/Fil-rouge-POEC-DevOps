@@ -5,9 +5,21 @@ services:
     alias: docker
 
 
+######           FONCTION TEST DE TEMPLATE   ###############
+.test_template: &test
+  image: webtweet
+  only:
+    - main
+  script:
+    - apk --no-cache add curl
+    - curl "https://$DOMAIN" | grep "Linux Tweet App!"  
+
+
+
 ######     DIFFERENTES ETAPES DE LA CI-CD   ###############
 stages:
   - Build
+  - Test acceptance
 
 
   ######           PHASE DE BUILD         ######################
@@ -20,3 +32,16 @@ docker-build:
   artifacts:
     paths:
       - webtweet.tar    
+
+
+######           PHASE DE TEST ET ACCEPTATION #############
+Test acceptance:
+  # Official docker image.
+  stage: Test acceptance
+  script:
+    - docker load < webtweet.tar
+    - docker run -d -p 80:8008 -e PORT=8008 --name webtweet_test webtweet
+    - sleep 5
+    - apk --no-cache add curl
+    - curl "http://docker" | grep  "Linux Tweet App!"
+
