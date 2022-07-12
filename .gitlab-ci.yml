@@ -48,7 +48,7 @@ Phase Docker build:
   script:
     - docker build -t  webtweet:v1.0.0 ./app/
     - docker tag webtweet:v1.0.0  webtweet:latest
-    - docker save webtweet:v1.0.0  > webtweet.tar
+    - docker save webtweet:latest  > webtweet.tar
   artifacts:
     paths:
       - webtweet.tar    
@@ -76,11 +76,13 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet.tar
-    - docker tag webtweet:v1.0.0 "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+
 #############################################################
 ######   PHASE REVUE DEPLOIEMENT AVEC STOP REVIEW  ##########
 #############################################################
