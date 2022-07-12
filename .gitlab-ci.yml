@@ -99,8 +99,8 @@ Phase deploy review:
     - npm install -g heroku
     - heroku container:login
     - heroku create abdoulayemady-$CI_COMMIT_REF_NAME  || echo "project already exist"
-    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
-    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet
+    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet
 
 
 
@@ -142,8 +142,8 @@ Phase Deploy staging:
     - npm install -g heroku
     - heroku container:login
     - heroku create abdoulayemady-staging || echo "project already exist"
-    - heroku container:push -a abdoulayemady-staging webtweet:v1.0.0
-    - heroku container:release -a abdoulayemady-staging webtweet:v1.0.0
+    - heroku container:push -a abdoulayemady-staging webtweet
+    - heroku container:release -a abdoulayemady-staging webtweet
 
 
 #############################################################
@@ -161,8 +161,8 @@ Phase Deploy pre-prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create abdoulayemady-pre-prod || echo "project already exist"
-    - heroku container:push -a abdoulayemady-pre-prod webtweet:v1.0.0
-    - heroku container:release -a abdoulayemady-pre-prod webtweet:v1.0.0
+    - heroku container:push -a abdoulayemady-pre-prod webtweet
+    - heroku container:release -a abdoulayemady-pre-prod webtweet
 
 
 #############################################################
@@ -180,8 +180,8 @@ Phase Deploy prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create abdoulayemady-prod || echo "project already exist"
-    - heroku container:push -a abdoulayemady-prod webtweet:v1.0.0
-    - heroku container:release -a abdoulayemady-prod webtweet:v1.0.0
+    - heroku container:push -a abdoulayemady-prod webtweet
+    - heroku container:release -a abdoulayemady-prod webtweet
 
 
 #############################################################
