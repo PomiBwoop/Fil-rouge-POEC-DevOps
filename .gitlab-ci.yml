@@ -14,7 +14,7 @@ services:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: webtweet
+  image: webtweet:v1.0.0
   only:
     - main
   script:
@@ -29,6 +29,14 @@ stages:
   - Build
   - Test acceptance
   - Release image
+  - Deploy review
+  - Stop review
+  - Deploy staging
+  - Test staging  
+  - Deploy pre-prod
+  - Test pre-prod
+  - Deploy prod
+  - Test prod
 
 
 #############################################################
@@ -73,4 +81,125 @@ Phase Release image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+
+#############################################################
+######   PHASE REVUE DEPLOIEMENT AVEC STOP REVIEW  ##########
+#############################################################
+Phase deploy review:
+  stage: Deploy review
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: https://abdoulayemady-$CI_COMMIT_REF_NAME.herokuapp.com
+    on_stop: Stop review
+  only:
+    - merge_requests
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create abdoulayemady-$CI_COMMIT_REF_NAME  || echo "project already exist"
+    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+
+
+#############################################################
+######  PHASE DE STOP DE REVUE AVANT CONTINUATION ###########
+#############################################################
+Phase Stop review:
+  stage: Stop review
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  only:
+    - merge_requests
+  when: manual
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku apps:destroy -a abdoulayemady-$CI_COMMIT_REF_NAME -c abdoulayemady-$CI_COMMIT_REF_NAME
+
+
+
+#############################################################
+###### PHASE DEPLOIEMENT SUR ENVI DE STAGING HEROKU #########
+#############################################################
+Phase Deploy staging:
+  stage: Deploy staging
+  environment:
+    name: staging
+    url: https://abdoulayemady-staging.herokuapp.com
+  only:
+    - main
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create abdoulayemady-staging || echo "project already exist"
+    - heroku container:push -a abdoulayemady-staging webtweet:v1.0.0
+    - heroku container:release -a abdoulayemady-staging webtweet:v1.0.0
+
+
+#############################################################
+###### PHASE DEPLOIEMENT SUR ENVI DE PREPROD HEROKU #########
+#############################################################
+Phase Deploy pre-prod:
+  stage: Deploy pre-prod
+  environment:
+    name: pre-prod
+    url: https://abdoulayemady-pre-prod.herokuapp.com
+  only:
+    - main
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create abdoulayemady-pre-prod || echo "project already exist"
+    - heroku container:push -a abdoulayemady-pre-prod webtweet:v1.0.0
+    - heroku container:release -a abdoulayemady-pre-prod webtweet:v1.0.0
+
+
+#############################################################
+###### PHASE DEPLOIEMENT SUR ENVI DE PROD HEROKU    #########
+#############################################################
+Phase Deploy prod:
+  stage: Deploy prod
+  environment:
+    name: prod
+    url: https://abdoulayemady-prod.herokuapp.com
+  only:
+    - main
+  script:
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create abdoulayemady-prod || echo "project already exist"
+    - heroku container:push -a abdoulayemady-prod webtweet:v1.0.0
+    - heroku container:release -a abdoulayemady-prod webtweet:v1.0.0
+
+
+#############################################################
+######  3 PHASES TESTS POUR STAING PREPROD ET PROD ##########
+#############################################################
+
+Phase de Test staging:
+  <<: *test
+  stage: Test staging
+  variables:
+    DOMAIN: abdoulayemady-staging.herokuapp.com
+
+Phase de Test pre-prod:
+  <<: *test
+  stage: Test pre-prod
+  variables:
+    DOMAIN: abdoulayemady-pre-prod.herokuapp.com
+
+Phase de Test prod:
+  <<: *test
+  stage: Test prod
+  variables:
+    DOMAIN: abdoulayemady-prod.herokuapp.com
 
