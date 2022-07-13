@@ -3,6 +3,10 @@
 #############################################################
 variables:
     IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
+    SNYK_TOKEN: 95633847-26f4-46d5-8be0-235d04d90fce
+    DOCKERHUB_ID: registry.gitlab.com/rmaziere
+    SHORT_IMAGE_NAME: fil-rouge-devops
+    IMAGE_TAG: main
 
 
 image: docker:latest
@@ -28,6 +32,7 @@ services:
 stages:
   - Build
   - Test acceptance
+  - Scan Securite
   - Release image
   - Deploy review
   - Stop review
@@ -67,6 +72,16 @@ Phase Test acceptance:
     - apk --no-cache add curl
 #    - curl "http://docker" | grep  "Linux Tweet App!"
     - curl "http://docker" | grep  "You've successfully deployed the Linux tweet app! Why not let the world know?"
+
+
+#############################################################
+######    PHASE DE SCAN DE SECURITE AVEC SNYK ###############
+#############################################################
+Phase Scan securite:
+  stage: Scan Securite
+  script:
+    - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN -v $(pwd):/app snyk/snyk:docker-latest snyk test --docker $DOCKERHUB_ID $SHORT_IMAGE_NAME:$IMAGE_TAG --json
+
 
 
 #############################################################
