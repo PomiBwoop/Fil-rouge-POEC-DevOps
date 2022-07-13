@@ -54,8 +54,8 @@ stages:
 Phase Docker build:
   # Use the official docker image.
   stage: Build
-  tags:
-    - $SPECIFIC_RUNNER_TAG
+#  tags:
+#    - $SPECIFIC_RUNNER_TAG
   script:
     - docker build -t  webtweet:v1.0.0   .
     - docker tag webtweet:v1.0.0  webtweet:latest
