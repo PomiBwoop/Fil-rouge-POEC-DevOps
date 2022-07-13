@@ -14,7 +14,7 @@ services:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: webtweet:v1.0.0
+  image: web
   only:
     - main
   script:
@@ -142,8 +142,8 @@ Phase Deploy staging:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-staging webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-staging webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-staging web
+    - heroku container:release -a ibdevops4amn-staging web
 
 
 #############################################################
@@ -161,8 +161,8 @@ Phase Deploy pre-prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-pre-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-pre-prod webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-pre-prod webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-pre-prod web
+    - heroku container:release -a ibdevops4amn-pre-prod web
 
 
 #############################################################
@@ -180,8 +180,8 @@ Phase Deploy prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-prod webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-prod webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-prod web
+    - heroku container:release -a ibdevops4amn-prod web
 
 
 #############################################################
