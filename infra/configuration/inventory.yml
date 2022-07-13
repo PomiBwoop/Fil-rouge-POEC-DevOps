@@ -5,9 +5,10 @@ all:
     staging:
     preprod:
     prod:
-children:
-  docker:
-    hosts:
-      staging:
-      preprod:
-      prod:
+  children:
+    docker:
+      hosts:
+        staging:
+        preprod:
+        prod:
+        monitoring:

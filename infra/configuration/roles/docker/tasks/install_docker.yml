@@ -16,3 +16,9 @@
       - containerd.io
     update_cache: yes
     state: present
+
+- name: "Add vagrant user to docker group"
+  ansible.builtin.user:
+    name: vagrant
+    groups: 
+      - docker
