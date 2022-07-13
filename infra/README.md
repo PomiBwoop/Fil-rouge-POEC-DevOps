@@ -138,3 +138,51 @@ preprod                    : ok=6    changed=5    unreachable=0    failed=0    s
 prod                       : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 staging                    : ok=6    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
+
+
+## ngrok network
+
+Ngrok permet d'effectuer une redirection de port afin d'exposer un port local sur Internet.
+
+Nous l'utilisons afin que gitlab puisse dialoguer avec notre runner et faire les déployements.
+
+### Installation
+
+```sh
+# Téléchargement de l'archive
+wget -O ngrok.tgz https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
+
+# Extraction du binaire
+tar -xvf ngrok.tgz
+
+# Configuration - Ajout du token
+./ngrok config add-authtoken 2BnVZWluvNOYFHgdFPg5CSDjjLG_58f29zRoAC1bxajEUTZNr
+```
+
+
+### Mise en place d'une redirection de port
+
+```sh
+# Lancement de la redirection du port 22
+./ngrok tcp 22
+```
+
+Résultat 
+
+```log
+ngrok                                                                    (Ctrl+C to quit)
+Join us in the ngrok community @ https://ngrok.com/slack
+
+Session Status                online
+Account                       user (Plan: Free)
+Version                       3.0.6
+Region                        Europe (eu)
+Latency                       27ms
+Web Interface                 http://127.0.0.1:4041
+Forwarding                    tcp://0.tcp.eu.ngrok.io:11484 -> localhost:22
+
+Connections                   ttl     opn     rt1     rt5     p50     p90
+                              0       0       0.00    0.00    0.00    0.00
+```
+
+La valeur `Forwarding` est récupérée et passée à GitLab Runner.
