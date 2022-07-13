@@ -126,8 +126,8 @@ Phase deploy review:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-$CI_COMMIT_REF_NAME  || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-$CI_COMMIT_REF_NAME ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
-    - heroku container:release -a ibdevops4amn-$CI_COMMIT_REF_NAME ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:push --app ibdevops4amn-$CI_COMMIT_REF_NAME web
+    - heroku container:release --app ibdevops4amn-$CI_COMMIT_REF_NAME web
 
 
 
@@ -152,7 +152,7 @@ Phase Stop review:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku apps:destroy -a ibdevops4amn-$CI_COMMIT_REF_NAME -c ibdevops4amn-$CI_COMMIT_REF_NAME
+    - heroku apps:destroy --app ibdevops4amn-$CI_COMMIT_REF_NAME -c ibdevops4amn-$CI_COMMIT_REF_NAME
 
 
 
@@ -174,8 +174,8 @@ Phase Deploy staging:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-staging ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
-    - heroku container:release -a ibdevops4amn-staging ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:push --app ibdevops4amn-staging web
+    - heroku container:release --app ibdevops4amn-staging web
 
 
 #############################################################
@@ -196,8 +196,8 @@ Phase Deploy pre-prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-pre-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-pre-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
-    - heroku container:release -a ibdevops4amn-pre-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:push --app ibdevops4amn-pre-prod web
+    - heroku container:release --app ibdevops4amn-pre-prod web
 
 
 #############################################################
@@ -217,8 +217,8 @@ Phase Deploy prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
-    - heroku container:release -a ibdevops4amn-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:push --app ibdevops4amn-prod web
+    - heroku container:release --app ibdevops4amn-prod web
 
 
 #############################################################
