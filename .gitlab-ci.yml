@@ -22,7 +22,7 @@ services:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: ${IMAGE_NAME}
+  image: ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
   only:
     - main
   script:
