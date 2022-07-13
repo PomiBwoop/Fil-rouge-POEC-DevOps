@@ -7,7 +7,7 @@ variables:
     DOCKERHUB_ID: registry.gitlab.com/rmaziere
     SHORT_IMAGE_NAME: fil-rouge-devops
     IMAGE_TAG: main
-    SPECIFIC_RUNNER_TAG: ib-bdx-test
+    SPECIFIC_RUNNER_TAG: ib-bdx
 
 
 image: docker:latest
