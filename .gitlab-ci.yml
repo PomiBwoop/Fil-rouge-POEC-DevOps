@@ -134,6 +134,8 @@ Phase deploy review:
 #############################################################
 Phase Stop review:
   stage: Stop review
+  tags:
+    - $SPECIFIC_RUNNER_TAG
   variables:
     GIT_STRATEGY: none
   environment:
@@ -155,6 +157,9 @@ Phase Stop review:
 #############################################################
 Phase Deploy staging:
   stage: Deploy staging
+  tags:
+    - $SPECIFIC_RUNNER_TAG
+
   environment:
     name: staging
     url: https://ibdevops4amn-staging.herokuapp.com
@@ -165,8 +170,8 @@ Phase Deploy staging:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-staging webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-staging webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-staging ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:release -a ibdevops4amn-staging ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
 
 
 #############################################################
@@ -174,6 +179,9 @@ Phase Deploy staging:
 #############################################################
 Phase Deploy pre-prod:
   stage: Deploy pre-prod
+  tags:
+    - $SPECIFIC_RUNNER_TAG
+
   environment:
     name: pre-prod
     url: https://ibdevops4amn-pre-prod.herokuapp.com
@@ -184,8 +192,8 @@ Phase Deploy pre-prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-pre-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-pre-prod webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-pre-prod webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-pre-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:release -a ibdevops4amn-pre-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
 
 
 #############################################################
@@ -193,6 +201,8 @@ Phase Deploy pre-prod:
 #############################################################
 Phase Deploy prod:
   stage: Deploy prod
+  tags:
+    - $SPECIFIC_RUNNER_TAG
   environment:
     name: prod
     url: https://ibdevops4amn-prod.herokuapp.com
@@ -203,8 +213,8 @@ Phase Deploy prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-prod webtweet:v1.0.0
-    - heroku container:release -a ibdevops4amn-prod webtweet:v1.0.0
+    - heroku container:push -a ibdevops4amn-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
+    - heroku container:release -a ibdevops4amn-prod ${IMAGE_NAME}:${CI_COMMIT_REF_NAME}
 
 
 #############################################################
