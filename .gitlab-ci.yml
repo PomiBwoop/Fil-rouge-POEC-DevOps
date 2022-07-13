@@ -90,7 +90,7 @@ Phase deploy review:
   stage: Deploy review
   environment:
     name: review/$CI_COMMIT_REF_NAME
-    url: https://abdoulayemady-$CI_COMMIT_REF_NAME.herokuapp.com
+    url: https://ibdevops4amn-$CI_COMMIT_REF_NAME.herokuapp.com
     on_stop: Phase Stop review # see de label Phase Stop review BELOW
   only:
     - merge_requests
@@ -98,9 +98,9 @@ Phase deploy review:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku create abdoulayemady-$CI_COMMIT_REF_NAME  || echo "project already exist"
-    - heroku container:push -a abdoulayemady-$CI_COMMIT_REF_NAME web
-    - heroku container:release -a abdoulayemady-$CI_COMMIT_REF_NAME web
+    - heroku create ibdevops4amn-$CI_COMMIT_REF_NAME  || echo "project already exist"
+    - heroku container:push -a ibdevops4amn-$CI_COMMIT_REF_NAME webtweet
+    - heroku container:release -a ibdevops4amn-$CI_COMMIT_REF_NAME webtweet
 
 
 
@@ -123,7 +123,7 @@ Phase Stop review:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku apps:destroy -a abdoulayemady-$CI_COMMIT_REF_NAME -c abdoulayemady-$CI_COMMIT_REF_NAME
+    - heroku apps:destroy -a ibdevops4amn-$CI_COMMIT_REF_NAME -c ibdevops4amn-$CI_COMMIT_REF_NAME
 
 
 
@@ -134,16 +134,16 @@ Phase Deploy staging:
   stage: Deploy staging
   environment:
     name: staging
-    url: https://abdoulayemady-staging.herokuapp.com
+    url: https://ibdevops4amn-staging.herokuapp.com
   only:
     - main
   script:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku create abdoulayemady-staging || echo "project already exist"
-    - heroku container:push -a abdoulayemady-staging web
-    - heroku container:release -a abdoulayemady-staging web
+    - heroku create ibdevops4amn-staging || echo "project already exist"
+    - heroku container:push -a ibdevops4amn-staging webtweet
+    - heroku container:release -a ibdevops4amn-staging webtweet
 
 
 #############################################################
@@ -153,16 +153,16 @@ Phase Deploy pre-prod:
   stage: Deploy pre-prod
   environment:
     name: pre-prod
-    url: https://abdoulayemady-pre-prod.herokuapp.com
+    url: https://ibdevops4amn-pre-prod.herokuapp.com
   only:
     - main
   script:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku create abdoulayemady-pre-prod || echo "project already exist"
-    - heroku container:push -a abdoulayemady-pre-prod web
-    - heroku container:release -a abdoulayemady-pre-prod web
+    - heroku create ibdevops4amn-pre-prod || echo "project already exist"
+    - heroku container:push -a ibdevops4amn-pre-prod webtweet
+    - heroku container:release -a ibdevops4amn-pre-prod webtwe
 
 
 #############################################################
@@ -172,16 +172,16 @@ Phase Deploy prod:
   stage: Deploy prod
   environment:
     name: prod
-    url: https://abdoulayemady-prod.herokuapp.com
+    url: https://ibdevops4amn-prod.herokuapp.com
   only:
     - main
   script:
     - apk --no-cache add npm
     - npm install -g heroku
     - heroku container:login
-    - heroku create abdoulayemady-prod || echo "project already exist"
-    - heroku container:push -a abdoulayemady-prod webtweet
-    - heroku container:release -a abdoulayemady-prod webtweet
+    - heroku create ibdevops4amn-prod || echo "project already exist"
+    - heroku container:push -a ibdevops4amn-prod webtweet
+    - heroku container:release -a ibdevops4amn-prod webtweet
 
 
 #############################################################
@@ -192,17 +192,17 @@ Phase de Test staging:
   <<: *test
   stage: Test staging
   variables:
-    DOMAIN: abdoulayemady-staging.herokuapp.com
+    DOMAIN: ibdevops4amn-staging.herokuapp.com
 
 Phase de Test pre-prod:
   <<: *test
   stage: Test pre-prod
   variables:
-    DOMAIN: abdoulayemady-pre-prod.herokuapp.com
+    DOMAIN: ibdevops4amn-pre-prod.herokuapp.com
 
 Phase de Test prod:
   <<: *test
   stage: Test prod
   variables:
-    DOMAIN: abdoulayemady-prod.herokuapp.com
+    DOMAIN: ibdevops4amn-prod.herokuapp.com
 
