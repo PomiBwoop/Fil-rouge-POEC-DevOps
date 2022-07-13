@@ -7,6 +7,7 @@ variables:
     DOCKERHUB_ID: registry.gitlab.com/rmaziere
     SHORT_IMAGE_NAME: fil-rouge-devops
     IMAGE_TAG: main
+    SPECIFIC_RUNNER_TAG: ib-bdx-test
 
 
 image: docker:latest
@@ -106,6 +107,10 @@ Phase Release image:
 #############################################################
 Phase deploy review:
   stage: Deploy review
+  tags:
+    - $SPECIFIC_RUNNER_TAG
+
+
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://ibdevops4amn-$CI_COMMIT_REF_NAME.herokuapp.com
