@@ -52,7 +52,7 @@ Phase Docker build:
   # Use the official docker image.
   stage: Build
   tags:
-    - $SPECIFIC_RUNNER_TAG
+#    - $SPECIFIC_RUNNER_TAG
   script:
     - docker build -t  webtweet:v1.0.0   .
     - docker tag webtweet:v1.0.0  webtweet:latest
@@ -137,7 +137,7 @@ Phase deploy review:
 Phase Stop review:
   stage: Stop review
   tags:
-    - $SPECIFIC_RUNNER_TAG
+#    - $SPECIFIC_RUNNER_TAG
   variables:
     GIT_STRATEGY: none
   environment:
@@ -160,7 +160,7 @@ Phase Stop review:
 Phase Deploy staging:
   stage: Deploy staging
   tags:
-    - $SPECIFIC_RUNNER_TAG
+#    - $SPECIFIC_RUNNER_TAG
 
   environment:
     name: staging
@@ -182,7 +182,7 @@ Phase Deploy staging:
 Phase Deploy pre-prod:
   stage: Deploy pre-prod
   tags:
-    - $SPECIFIC_RUNNER_TAG
+#    - $SPECIFIC_RUNNER_TAG
 
   environment:
     name: pre-prod
@@ -204,7 +204,7 @@ Phase Deploy pre-prod:
 Phase Deploy prod:
   stage: Deploy prod
   tags:
-    - $SPECIFIC_RUNNER_TAG
+#    - $SPECIFIC_RUNNER_TAG
   environment:
     name: prod
     url: https://ibdevops4amn-prod.herokuapp.com
