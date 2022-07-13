@@ -99,8 +99,8 @@ Phase deploy review:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-$CI_COMMIT_REF_NAME  || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-$CI_COMMIT_REF_NAME web
-    - heroku container:release -a ibdevops4amn-$CI_COMMIT_REF_NAME web
+    - heroku container:push -a ibdevops4amn-$CI_COMMIT_REF_NAME webtweet:v1.0.0
+    - heroku container:release -a ibdevops4amn-$CI_COMMIT_REF_NAME webtweet:v1.0.0
 
 
 
@@ -142,8 +142,8 @@ Phase Deploy staging:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-staging web
-    - heroku container:release -a ibdevops4amn-staging web
+    - heroku container:push -a ibdevops4amn-staging webtweet:v1.0.0
+    - heroku container:release -a ibdevops4amn-staging webtweet:v1.0.0
 
 
 #############################################################
@@ -161,8 +161,8 @@ Phase Deploy pre-prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-pre-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-pre-prod web
-    - heroku container:release -a ibdevops4amn-pre-prod web
+    - heroku container:push -a ibdevops4amn-pre-prod webtweet:v1.0.0
+    - heroku container:release -a ibdevops4amn-pre-prod webtweet:v1.0.0
 
 
 #############################################################
@@ -180,8 +180,8 @@ Phase Deploy prod:
     - npm install -g heroku
     - heroku container:login
     - heroku create ibdevops4amn-prod || echo "project already exist"
-    - heroku container:push -a ibdevops4amn-prod web
-    - heroku container:release -a ibdevops4amn-prod web
+    - heroku container:push -a ibdevops4amn-prod webtweet:v1.0.0
+    - heroku container:release -a ibdevops4amn-prod webtweet:v1.0.0
 
 
 #############################################################
