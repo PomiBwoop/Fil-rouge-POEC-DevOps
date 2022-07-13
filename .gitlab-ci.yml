@@ -80,9 +80,9 @@ Phase Test acceptance:
 Phase Scan securite:
   stage: Scan Securite
   script:
-    - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -v $(pwd):/app snyk/snyk:docker \
+    - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN 
+        -v /var/run/docker.sock:/var/run/docker.sock 
+        -v $(pwd):/app snyk/snyk:docker 
         snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || false;
 
 
