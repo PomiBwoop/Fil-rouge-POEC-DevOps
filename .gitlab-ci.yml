@@ -46,7 +46,7 @@ Phase Docker build:
   # Use the official docker image.
   stage: Build
   script:
-    - docker build -t  webtweet:v1.0.0 ./app/
+    - docker build -t  webtweet:v1.0.0   .
     - docker tag webtweet:v1.0.0  webtweet:latest
     - docker save webtweet:v1.0.0  > webtweet.tar
   artifacts:
