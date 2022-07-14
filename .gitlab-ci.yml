@@ -22,7 +22,7 @@ services:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: nginx:stable-alpine
+#  image: nginx:stable-alpine
   only:
     - main
   script:
