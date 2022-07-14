@@ -19,6 +19,24 @@ services:
     alias: docker
 
 #############################################################
+######     DIFFERENTES ETAPES DE LA CI-CD   #################
+#############################################################
+stages:
+  - Build
+  - Test acceptance
+  - Release image
+  - Scan Securite
+  - Deploy review
+  - Stop review
+  - Deploy staging
+  - Test staging  
+  - Deploy pre-prod
+  - Test pre-prod
+  - Deploy prod
+  - Test prod
+
+
+#############################################################
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
@@ -29,23 +47,6 @@ services:
     - apk --no-cache add curl
     - curl "https://$DOMAIN" | grep "Linux Tweet App!"  
 
-
-#############################################################
-######     DIFFERENTES ETAPES DE LA CI-CD   #################
-#############################################################
-stages:
-  - Build
-  - Test acceptance
-  - Scan Securite
-  - Release image
-  - Deploy review
-  - Stop review
-  - Deploy staging
-  - Test staging  
-  - Deploy pre-prod
-  - Test pre-prod
-  - Deploy prod
-  - Test prod
 
 
 #############################################################
@@ -81,19 +82,6 @@ Phase Test acceptance:
 
 
 #############################################################
-######    PHASE DE SCAN DE SECURITE AVEC SNYK ###############
-#############################################################
-Phase Scan securite:
-  stage: Scan Securite
-  script:
-    - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN 
-        -v /var/run/docker.sock:/var/run/docker.sock 
-        -v $(pwd):/app snyk/snyk:docker 
-        snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || true;
-
-
-
-#############################################################
 ###### PHASE DE RELEASE DE L'IMAGE GITLAB REGISTRY ##########
 #############################################################
 Phase Release image:
@@ -105,6 +93,20 @@ Phase Release image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+
+
+#############################################################
+######    PHASE DE SCAN DE SECURITE AVEC SNYK ###############
+#############################################################
+Phase Scan securite:
+  stage: Scan Securite
+  script:
+    - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN 
+        -v /var/run/docker.sock:/var/run/docker.sock 
+        -v $(pwd):/app snyk/snyk:docker 
+        snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || true;
+
 
 
 #############################################################
