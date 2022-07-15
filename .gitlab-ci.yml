@@ -57,12 +57,11 @@ stages:
 Phase Docker build:
   stage: Build
   script:
-    - docker build -t webtweet:v1.0.0 .
-    - docker tag webtweet:v1.0.0 webtweet:latest
-    - docker save webtweet:v1.0.0 > webtweet.tar
+    - docker build -t webtweet:v1.0.0 -t webtweet:latest .
+    - docker save webtweet:latest > webtweet_latest.tar
   artifacts:
     paths:
-      - webtweet.tar
+      - webtweet_latest.tar
 
 
 #############################################################
@@ -71,7 +70,7 @@ Phase Docker build:
 Phase Test acceptance:
   stage: Test acceptance
   script:
-    - docker load < webtweet.tar
+    - docker load < webtweet_latest.tar
     - docker stop webtweet:latest
     - docker rm webtweet:latest
     - docker run -d -p 80:80 --name webtweet:latest $SHORT_IMAGE_NAME:$IMAGE_TAG
@@ -87,8 +86,8 @@ Phase Test acceptance:
 Phase Release image:
   stage: Release image
   script:
-    - docker load < webtweet.tar
-    - docker tag webtweet:v1.0.0 "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - docker load < webtweet_latest.tar
+    - docker tag webtweet:latest "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
