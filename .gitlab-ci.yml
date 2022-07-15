@@ -8,10 +8,16 @@ default:
     - docker
 
 variables:
-    IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
+    REGISTRY: registry.gitlab.com/rmaziere
+    REPOSITORY: fil-rouge-devops
+    #IMAGE_NAME: webtweet
+    CONTAINER_NAME: webtweet
+    #IMAGE_TAG: latest
+    CONTAINER_IP: 172.17.0.3
+    EXTERN_PORT: 8080
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
-    DOCKERHUB_ID: registry.gitlab.com/rmaziere
-    SHORT_IMAGE_NAME: fil-rouge-devops
+
+    IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
     IMAGE_TAG: main
 
 image: docker:latest
@@ -57,9 +63,8 @@ Phase Docker build:
   # Use the official docker image.
   stage: Build
   script:
-    - docker build -t webtweet:v1.0.0 .
-    - docker tag webtweet:v1.0.0 webtweet:latest
-    - docker save webtweet:v1.0.0 > webtweet.tar
+    - docker build -t webtweet:v1.0.0 -t webtweet:latest .
+    - docker save webtweet:latest > webtweet.tar
   artifacts:
     paths:
       - webtweet.tar
@@ -73,9 +78,9 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet.tar
-    - docker stop webtweet_test
-    - docker rm webtweet_test
-    - docker run -d -p 80:80 -e PORT=80 --name webtweet_test webtweet:v1.0.0
+    #- docker stop webtweet
+    #- docker rm webtweet
+    - docker run -rm -d -p 80:80 -e PORT=80 --name webtweet webtweet:latest
     - sleep 5
     - apk --no-cache add curl
     - curl "http://docker" | grep "Linux Tweet App!"
@@ -88,7 +93,7 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet.tar
-    - docker tag webtweet:v1.0.0 "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - docker tag webtweet:latest "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
 #    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
@@ -104,7 +109,7 @@ Phase Scan securite:
     - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN
         -v /var/run/docker.sock:/var/run/docker.sock
         -v $(pwd):/app snyk/snyk:docker
-        snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || true;
+        snyk test --docker $REGISTRY/$REPOSITORY:$IMAGE_TAG --json || true;
 
 
 #############################################################
@@ -128,7 +133,7 @@ Phase deploy review:
 
 
 #############################################################
-######  PHASE DE STOP DE REVUE AVANT CONTINUATION ###########
+######  STOP DE REVUE AVANT CONTINUATION ###########
 #############################################################
 Phase Stop review:
   stage: Stop review
