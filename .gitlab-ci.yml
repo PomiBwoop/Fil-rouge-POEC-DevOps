@@ -2,8 +2,8 @@
 ###### VARIABLES & MISE EN OEUVRE DOCKER IN DOCKER ##########
 #############################################################
 default:
-#  tags:
-#    - ib-bdx
+  tags:
+    - ib-bdx
 variables:
     IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
@@ -55,8 +55,8 @@ stages:
 Phase Docker build:
   # Use the official docker image.
   stage: Build
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
+  tags:
+    - $SPECIFIC_RUNNER_TAG
   script:
     - docker build -t  webtweet:v1.0.0   .
     - docker tag webtweet:v1.0.0  webtweet:latest
