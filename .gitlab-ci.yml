@@ -78,8 +78,8 @@ Phase Test acceptance:
     - docker run --rm -d -p $VM_PORT:80 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
-    - docker ps
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://127.0.0.1:$VM_PORT" | grep "200" # Si code 200 => succès
+    #- docker ps
+    #- curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://127.0.0.1:8080" | grep "200" # Si code 200 => succès
 
 
 #############################################################
