@@ -8,12 +8,10 @@ default:
     - docker
 
 variables:
-    IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
-    SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
     DOCKERHUB_ID: registry.gitlab.com/rmaziere
-    SHORT_IMAGE_NAME: fil-rouge-devops
+    IMAGE_NAME: webtweet
     IMAGE_TAG: latest
-    SPECIFIC_RUNNER_TAG: ib-bdx
+    SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
 
 image: docker:latest
 services:
@@ -43,7 +41,7 @@ stages:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: ${IMAGE_NAME}:${IMAGE_TAG}
+  image: $DOCKERHUB_ID/$IMAGE_NAME:$IMAGE_TAG
   only:
     - main
   script:
@@ -71,11 +69,7 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet_latest.tar
-    - docker image ls
-    - docker container ls --all
-    - docker stop webtweet:latest
-    - docker rm webtweet:latest
-    - docker run -d -p 80:80 --name webtweet:latest $SHORT_IMAGE_NAME:$IMAGE_TAG
+    - docker run -d -p 80:80 --name webtweet:latest $IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
 #    - curl "http://172.17.0.3" | grep "You've successfully deployed the Linux tweet app! Why not let the world know?"
@@ -89,11 +83,11 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet_latest.tar
-    - docker tag webtweet:latest "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
-#    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker tag webtweet:latest "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+#    - docker tag webtweet "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
-#    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker push "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+#    - docker push "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
 
 
 #############################################################
@@ -105,7 +99,7 @@ Phase Scan securite:
     - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN
         -v /var/run/docker.sock:/var/run/docker.sock
         -v $(pwd):/app snyk/snyk:docker
-        snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || true;
+        snyk test --docker $DOCKERHUB_ID/$IMAGE_NAME:$IMAGE_TAG --json || true;
 
 
 #############################################################
