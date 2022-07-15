@@ -6,6 +6,7 @@ default:
     - ib-bdx
     - staging
     - docker
+
 variables:
     IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
@@ -14,11 +15,11 @@ variables:
     IMAGE_TAG: latest
     SPECIFIC_RUNNER_TAG: ib-bdx
 
-
 image: docker:latest
 services:
   - name: docker:dind
     alias: docker
+
 
 #############################################################
 ######     DIFFERENTES ETAPES DE LA CI-CD   #################
@@ -50,15 +51,11 @@ stages:
     - curl "https://$DOMAIN" | grep "Linux Tweet App!"
 
 
-
 #############################################################
 ######           PHASE DE BUILD         #####################
 #############################################################
 Phase Docker build:
-  # Use the official docker image.
   stage: Build
-  tags:
-    - $SPECIFIC_RUNNER_TAG
   script:
     - docker build -t webtweet:v1.0.0 .
     - docker tag webtweet:v1.0.0 webtweet:latest
@@ -72,7 +69,6 @@ Phase Docker build:
 ######      PHASE DE TEST ET ACCEPTATION     ################
 #############################################################
 Phase Test acceptance:
-  # Official docker image.
   stage: Test acceptance
   script:
     - docker load < webtweet.tar
@@ -83,6 +79,7 @@ Phase Test acceptance:
     - apk --no-cache add curl
 #    - curl "http://172.17.0.3" | grep "You've successfully deployed the Linux tweet app! Why not let the world know?"
     - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.17.0.3" | grep "200" # Si code 200 => succès
+
 
 #############################################################
 ###### PHASE DE RELEASE DE L'IMAGE GITLAB REGISTRY ##########
@@ -98,7 +95,6 @@ Phase Release image:
 #    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
 
-
 #############################################################
 ######    PHASE DE SCAN DE SECURITE AVEC SNYK ###############
 #############################################################
@@ -111,15 +107,11 @@ Phase Scan securite:
         snyk test --docker $DOCKERHUB_ID/$SHORT_IMAGE_NAME:$IMAGE_TAG --json || true;
 
 
-
 #############################################################
 ######   PHASE REVUE DEPLOIEMENT AVEC STOP REVIEW  ##########
 #############################################################
 Phase deploy review:
   stage: Deploy review
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
-
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: https://ibdevops4amn-$CI_COMMIT_REF_NAME.herokuapp.com
@@ -135,16 +127,11 @@ Phase deploy review:
     - heroku container:release --app ibdevops4amn-$CI_COMMIT_REF_NAME web
 
 
-
-
-
 #############################################################
 ######  PHASE DE STOP DE REVUE AVANT CONTINUATION ###########
 #############################################################
 Phase Stop review:
   stage: Stop review
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
   variables:
     GIT_STRATEGY: none
   environment:
@@ -158,7 +145,6 @@ Phase Stop review:
     - npm install -g heroku
     - heroku container:login
     - heroku apps:destroy --app ibdevops4amn-$CI_COMMIT_REF_NAME -c ibdevops4amn-$CI_COMMIT_REF_NAME
-
 
 
 #############################################################
@@ -180,9 +166,6 @@ Phase Deploy staging:
 #############################################################
 Phase Deploy pre-prod:
   stage: Deploy pre-prod
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
-
   environment:
     name: pre-prod
     url: https://ibdevops4amn-pre-prod.herokuapp.com
@@ -202,8 +185,6 @@ Phase Deploy pre-prod:
 #############################################################
 Phase Deploy prod:
   stage: Deploy prod
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
   environment:
     name: prod
     url: https://ibdevops4amn-prod.herokuapp.com
@@ -239,4 +220,3 @@ Phase de Test prod:
   stage: Test prod
   variables:
     DOMAIN: ibdevops4amn-prod.herokuapp.com
-
