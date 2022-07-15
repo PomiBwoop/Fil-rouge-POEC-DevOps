@@ -12,7 +12,7 @@ variables:
     IMAGE_NAME: webtweet
     CONTAINER_NAME: webtweet
     IMAGE_TAG: latest
-    CONTAINER_IP: $CONTAINER_IP
+    CONTAINER_IP: 172.17.0.3
     VM_PORT: 8080
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
 
@@ -75,7 +75,7 @@ Phase Test acceptance:
     - docker run -d -p $VM_PORT:80 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$CONTAINER_IP:VM_PORT" | grep "200" # Si code 200 => succès
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$CONTAINER_IP:$VM_PORT" | grep "200" # Si code 200 => succès
 
 
 #############################################################
