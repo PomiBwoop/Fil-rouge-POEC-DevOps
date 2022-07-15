@@ -4,12 +4,14 @@
 default:
   tags:
     - ib-bdx
+    - staging
+    - docker
 variables:
     IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
     DOCKERHUB_ID: registry.gitlab.com/rmaziere
     SHORT_IMAGE_NAME: fil-rouge-devops
-    IMAGE_TAG: main
+    IMAGE_TAG: latest
     SPECIFIC_RUNNER_TAG: ib-bdx
 
 
@@ -76,11 +78,11 @@ Phase Test acceptance:
     - docker load < webtweet.tar
     - docker stop webtweet_test
     - docker rm webtweet_test
-    - docker run -d -p 80:80 -e PORT=80 --name webtweet_test webtweet:v1.0.0
+    - docker run -d -p 80:80 --name webtweet_test $SHORT_IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
-    - curl "http://172.17.0.3" | grep "You've successfully deployed the Linux tweet app! Why not let the world know?"
-
+#    - curl "http://172.17.0.3" | grep "You've successfully deployed the Linux tweet app! Why not let the world know?"
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.17.0.3" | grep "200" # Si code 200 => succès
 
 #############################################################
 ###### PHASE DE RELEASE DE L'IMAGE GITLAB REGISTRY ##########
@@ -160,25 +162,17 @@ Phase Stop review:
 
 
 #############################################################
-###### PHASE DEPLOIEMENT SUR ENVI DE STAGING HEROKU #########
+###### PHASE DEPLOIEMENT SUR ENVI DE STAGING  ###############
 #############################################################
 Phase Deploy staging:
   stage: Deploy staging
-#  tags:
-#    - $SPECIFIC_RUNNER_TAG
-
-  environment:
-    name: staging
-    url: https://ibdevops4amn-staging.herokuapp.com
-  only:
-    - main
+  tags:
+    - ib-bdx
+    - staging
+    - shell
   script:
-    - apk --no-cache add npm
-    - npm install -g heroku
-    - heroku container:login
-    - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push --app ibdevops4amn-staging web
-    - heroku container:release --app ibdevops4amn-staging web
+    - docker run -d -p 8080:80 --name webtweet_test registry.gitlab.com/rmaziere/fil-rouge-devops:latest
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.0.0.1:8080" | grep "200" # Si code 200 => succès
 
 
 #############################################################
