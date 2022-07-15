@@ -71,6 +71,8 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet_latest.tar
+    - docker image ls
+    - docker container ls --all
     - docker stop webtweet:latest
     - docker rm webtweet:latest
     - docker run -d -p 80:80 --name webtweet:latest $SHORT_IMAGE_NAME:$IMAGE_TAG
