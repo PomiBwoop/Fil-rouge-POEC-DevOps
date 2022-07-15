@@ -80,7 +80,7 @@ Phase Test acceptance:
     - docker load < webtweet.tar
     #- docker stop webtweet
     #- docker rm webtweet
-    - docker run -rm -d -p 80:80 -e PORT=80 --name webtweet webtweet:latest
+    - docker run --rm -d -p 80:80 -e PORT=80 --name webtweet webtweet:latest
     - sleep 5
     - apk --no-cache add curl
     - curl "http://docker" | grep "Linux Tweet App!"
