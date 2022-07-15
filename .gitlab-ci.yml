@@ -8,9 +8,12 @@ default:
     - docker
 
 variables:
-    DOCKERHUB_ID: registry.gitlab.com/rmaziere
+    REGISTRY: registry.gitlab.com/rmaziere
     IMAGE_NAME: webtweet
+    CONTAINER_NAME: webtweet
     IMAGE_TAG: latest
+    CONTAINER_IP: $CONTAINER_IP
+    VM_PORT: 8080
     SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
 
 image: docker:latest
@@ -41,7 +44,7 @@ stages:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: $DOCKERHUB_ID/$IMAGE_NAME:$IMAGE_TAG
+  image: $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
   only:
     - main
   script:
@@ -69,11 +72,10 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet_latest.tar
-    - docker run -d -p 80:80 --name webtweet:latest $IMAGE_NAME:$IMAGE_TAG
+    - docker run -d -p $VM_PORT:80 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
-#    - curl "http://172.17.0.3" | grep "You've successfully deployed the Linux tweet app! Why not let the world know?"
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.17.0.3" | grep "200" # Si code 200 => succès
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$CONTAINER_IP:VM_PORT" | grep "200" # Si code 200 => succès
 
 
 #############################################################
@@ -83,11 +85,11 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet_latest.tar
-    - docker tag webtweet:latest "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
-#    - docker tag webtweet "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+    - docker tag webtweet:latest "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+#    - docker tag webtweet "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
-#    - docker push "$DOCKERHUB_ID/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+    - docker push "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+#    - docker push "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
 
 
 #############################################################
@@ -99,7 +101,7 @@ Phase Scan securite:
     - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN
         -v /var/run/docker.sock:/var/run/docker.sock
         -v $(pwd):/app snyk/snyk:docker
-        snyk test --docker $DOCKERHUB_ID/$IMAGE_NAME:$IMAGE_TAG --json || true;
+        snyk test --docker $REGISTRY/$IMAGE_NAME:$IMAGE_TAG --json || true;
 
 
 #############################################################
@@ -152,8 +154,9 @@ Phase Deploy staging:
     - staging
     - shell
   script:
-    - docker run -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:latest
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.0.0.1:8080" | grep "200" # Si code 200 => succès
+    - docker run -d -p $VM_PORT:80 --name $CONTAINER_NAME $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.0.0.1:$VM_PORT" | grep "200" # Si code 200 => succès
 
 
 #############################################################
