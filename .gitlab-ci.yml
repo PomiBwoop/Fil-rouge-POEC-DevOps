@@ -79,9 +79,9 @@ Phase Test acceptance:
     - docker run -d -p 80:80 -e PORT=80 --name webtweet_test webtweet:v1.0.0
     - sleep 5
     - apk --no-cache add curl
-#    - curl "http://docker" | grep  "Linux Tweet App!"
+    - curl "https://docker" | grep  "Linux Tweet App!"
 #    - curl "http://docker" | grep  "You've successfully deployed the Linux tweet app! Why not let the world know?"
-    - curl "https://127.0.0.1:2375" | grep  "You've successfully deployed the Linux tweet app! Why not let the world know?"
+#    - curl "https://127.0.0.1:2375" | grep  "You've successfully deployed the Linux tweet app! Why not let the world know?"
 
 
 #############################################################
