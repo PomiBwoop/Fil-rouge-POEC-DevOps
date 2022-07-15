@@ -72,7 +72,7 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet_latest.tar
-    - docker run -d -p $VM_PORT:80 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
+    - docker run --rm -d -p $VM_PORT:80 --name $CONTAINER_NAME $IMAGE_NAME:$IMAGE_TAG
     - sleep 5
     - apk --no-cache add curl
     - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$CONTAINER_IP:$VM_PORT" | grep "200" # Si code 200 => succès
@@ -154,7 +154,7 @@ Phase Deploy staging:
     - staging
     - shell
   script:
-    - docker run -d -p $VM_PORT:80 --name $CONTAINER_NAME $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+    - docker run --rm -d -p $VM_PORT:80 --name $CONTAINER_NAME $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
     - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.0.0.1:$VM_PORT" | grep "200" # Si code 200 => succès
 
