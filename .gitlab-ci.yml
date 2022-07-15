@@ -80,6 +80,7 @@ Phase Test acceptance:
     - apk --no-cache add curl
     #- docker ps
     #- curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://127.0.0.1:8080" | grep "200" # Si code 200 => succès
+    - docker stop $CONTAINER_NAME
 
 
 #############################################################
@@ -92,7 +93,8 @@ Phase Release image:
     - docker tag webtweet:latest "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_REF_NAME"
 #    - docker tag webtweet "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+#    - docker push "$IMAGE_NAME:$CI_COMMIT_REF_NAME"
+    - docker push "$IMAGE_NAME:$IMAGE_TAG"
 #    - docker push "$REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
 
 
