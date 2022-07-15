@@ -74,6 +74,7 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet.tar
+    - docker rm webtweet_test
     - docker run -d -p 80:80 -e PORT=80 --name webtweet_test webtweet:v1.0.0
     - sleep 5
     - apk --no-cache add curl
