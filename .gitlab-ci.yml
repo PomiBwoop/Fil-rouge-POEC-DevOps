@@ -41,7 +41,7 @@ stages:
   - Deploy review
   - Stop review
   - Deploy staging
-  - Test staging
+#  - Test staging
   - Deploy pre-prod
   - Test pre-prod
   - Deploy prod
@@ -222,11 +222,11 @@ Phase Deploy prod:
 ######  3 PHASES TESTS POUR STAING PREPROD ET PROD ##########
 #############################################################
 
-Phase de Test staging:
-  <<: *test
-  stage: Test staging
-  variables:
-    DOMAIN: ibdevops4amn-staging.herokuapp.com
+#Phase de Test staging:
+#  <<: *test
+#  stage: Test staging
+#  variables:
+#    DOMAIN: ibdevops4amn-staging.herokuapp.com
 
 #Phase de Test pre-prod:
 #  <<: *test
