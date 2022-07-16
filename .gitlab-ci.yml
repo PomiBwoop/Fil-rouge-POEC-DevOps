@@ -4,6 +4,9 @@ default:
     - staging
     - docker
 
+variables:
+  PREPROD_IP: 192.168.99.20
+
 image: docker:latest
 services:
   - name: docker:dind
@@ -19,4 +22,7 @@ Test cmd over ssh:
     - staging
     - shell
   script:
-    - ssh vagrant@192.168.99.20 'echo $HOSTNAME'
+    - ssh vagrant@$PREPROD_IP 'echo Welcome on $HOSTNAME'
+    - scp /tmp/webtweet_latest.tar vagrant@$PREPROD_IP:/tmp/
+    - ssh vagrant@$PREPROD_IP 'docker load < /tmp/webtweet_latest.tar'
+    - ssh vagrant@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
