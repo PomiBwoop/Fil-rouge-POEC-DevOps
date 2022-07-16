@@ -53,7 +53,7 @@ stages:
     - main
   script:
     - apk --no-cache add curl
-    - curl "https://$DOMAIN" | grep "Linux Tweet App!"
+    - curl "http://$DOMAIN" | grep "Linux Tweet App!"
 
 
 #############################################################
@@ -158,13 +158,18 @@ Phase Stop review:
 #############################################################
 Phase Deploy staging:
   stage: Deploy staging
-  tags:
-    - ib-bdx
-    - staging
-    - shell
+  environment:
+    name: staging
+    url: https://ibdevops4amn-staging.herokuapp.com
+  only:
+    - main
   script:
-    - docker run --rm -d -p $EXTERN_PORT:80 --name ${CONTAINER_NAME}_STAG $REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-
+    - apk --no-cache add npm
+    - npm install -g heroku
+    - heroku container:login
+    - heroku create ibdevops4amn-staging || echo "project already exist"
+    - heroku container:push --app ibdevops4amn-staging web
+    - heroku container:release --app ibdevops4amn-staging web
 
 
 #############################################################
