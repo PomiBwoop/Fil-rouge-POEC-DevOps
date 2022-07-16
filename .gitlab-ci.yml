@@ -59,12 +59,20 @@ stages:
     - apk --no-cache add curl
     - curl "http://$DOMAIN" | grep "Linux Tweet App!"
 
+.test_local: &test_local
+  tags:
+    - ib-bdx
+    - staging
+    - shell
+  script:
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$IP:$PORT" | grep "200" # Si code 200 => succès
+
+
 
 #############################################################
 ######           BUILD         #####################
 #############################################################
 Phase Docker build:
-  # Use the official docker image.
   stage: Build
   script:
     - docker build -t webtweet:v1.0.0 -t webtweet:latest .
@@ -78,7 +86,6 @@ Phase Docker build:
 ######      TEST ET ACCEPTATION     ################
 #############################################################
 Phase Test acceptance:
-  # Official docker image.
   stage: Test acceptance
   script:
     - docker load < webtweet.tar
@@ -193,20 +200,6 @@ Phase Deploy pre-prod:
 
 
 #############################################################
-######      TEST PrePROD     ################
-#############################################################
-Phase de Test pre-prod:
-  # Official docker image.
-  stage: Test pre-prod
-  tags:
-    - ib-bdx
-    - staging
-    - shell
-  script:
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://$PREPROD_IP:$EXTERN_PORT" | grep "200" # Si code 200 => succès
-
-
-#############################################################
 ###### DEPLOIEMENT SUR PROD    #########
 #############################################################
 Phase Deploy prod:
@@ -232,14 +225,16 @@ Phase Deploy prod:
 #  variables:
 #    DOMAIN: ibdevops4amn-staging.herokuapp.com
 
-#Phase de Test pre-prod:
-#  <<: *test
-#  stage: Test pre-prod
-#  variables:
-#    DOMAIN: ibdevops4amn-pre-prod.herokuapp.com
+Phase de Test pre-prod:
+  <<: *test_local
+  stage: Test pre-prod
+  variables:
+    IP: $PREPROD_IP
+    PORT: $EXTERN_PORT
 
 Phase de Test prod:
-  <<: *test
+  <<: *test_local
   stage: Test prod
   variables:
-    DOMAIN: ibdevops4amn-prod.herokuapp.com
+    IP: $PROD_IP
+    PORT: $EXTERN_PORT
