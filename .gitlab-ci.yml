@@ -10,14 +10,12 @@ default:
 variables:
   REGISTRY: registry.gitlab.com/rmaziere
   REPOSITORY: fil-rouge-devops
-  #IMAGE_NAME: webtweet
   CONTAINER_NAME: webtweet
   #IMAGE_TAG: latest
   CONTAINER_IP: 172.17.0.3
   EXTERN_PORT: 8080
   SNYK_TOKEN: "95633847-26f4-46d5-8be0-235d04d90fce"
 
-  IMAGE_NAME: registry.gitlab.com/rmaziere/fil-rouge-devops
   IMAGE_TAG: main
 
   PREPROD_IP: 192.168.99.20
@@ -52,7 +50,7 @@ stages:
 ######       FONCTION TEST DE TEMPLATE    ###################
 #############################################################
 .test_template: &test
-  image: ${IMAGE_NAME}:${IMAGE_TAG}
+  image: $REGISTRY/$REPOSITORY:${IMAGE_TAG}
   only:
     - main
   script:
@@ -77,8 +75,6 @@ Phase Docker build:
   script:
     - docker build -t webtweet:v1.0.0 -t webtweet:latest .
     - docker save webtweet:latest > webtweet.tar
-    - echo $HOSTNAME:$PWD
-    - ls /tmp/
   artifacts:
     paths:
       - webtweet.tar
@@ -107,11 +103,11 @@ Phase Release image:
   stage: Release image
   script:
     - docker load < webtweet.tar
-    - docker tag webtweet:latest "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
-#    - docker tag webtweet "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker tag webtweet:latest "$REGISTRY/$REPOSITORY:${CI_COMMIT_REF_NAME}"
+#    - docker tag webtweet "$REGISTRY/$REPOSITORY:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker push "${IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
-#    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker push "$REGISTRY/$REPOSITORY:${CI_COMMIT_REF_NAME}"
+#    - docker push "$REGISTRY/$REPOSITORY:${CI_COMMIT_SHORT_SHA}"
 
 
 #############################################################
@@ -196,10 +192,12 @@ Phase Deploy pre-prod:
     - shell
   script:
     - ssh $SSH_USER@$PREPROD_IP 'echo Welcome on $HOSTNAME'
-    - scp /tmp/webtweet_latest.tar $SSH_USER@$PREPROD_IP:/tmp/
-    - ssh $SSH_USER@$PREPROD_IP 'docker load < /tmp/webtweet_latest.tar'
-    - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
-    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
+#    - scp /tmp/webtweet_latest.tar $SSH_USER@$PREPROD_IP:/tmp/
+#    - ssh $SSH_USER@$PREPROD_IP 'docker load < /tmp/webtweet_latest.tar'
+#    - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
+#    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
+
+    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet $REGISTRY/REPOSITORY:$IMAGE_TAG'
 
 
 #############################################################
