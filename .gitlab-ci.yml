@@ -88,8 +88,7 @@ Phase Test acceptance:
   stage: Test acceptance
   script:
     - docker load < webtweet.tar
-    #- docker stop webtweet
-    #- docker rm webtweet
+    - docker container stop webtweet || true
     - docker run --rm -d -p 80:80 -e PORT=80 --name webtweet webtweet:latest
     - sleep 5
     - apk --no-cache add curl
@@ -109,6 +108,7 @@ Phase Release image:
 #    - docker tag webtweet "$REGISTRY/$REPOSITORY:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push "$REGISTRY/$REPOSITORY:${CI_COMMIT_REF_NAME}"
+    - docker push "$REGISTRY/webtweet:latest"
 #    - docker push "$REGISTRY/$REPOSITORY:${CI_COMMIT_SHORT_SHA}"
 
 
