@@ -77,6 +77,8 @@ Phase Docker build:
   script:
     - docker build -t webtweet:v1.0.0 -t webtweet:latest .
     - docker save webtweet:latest > webtweet.tar
+    - echo $HOSTNAME:$PWD
+    - ls /tmp/
   artifacts:
     paths:
       - webtweet.tar
