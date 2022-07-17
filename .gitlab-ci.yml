@@ -34,7 +34,7 @@ services:
 #############################################################
 stages:
   - Build
-  - Test acceptance
+  - Test
   - Release image
   - Scan Securite
   - Deploy review
@@ -85,7 +85,7 @@ Phase Docker build:
 ######      TEST ET ACCEPTATION     ################
 #############################################################
 Phase Test acceptance:
-  stage: Test acceptance
+  stage: Test
   script:
     - docker load < webtweet.tar
     - docker container stop webtweet || true
@@ -114,7 +114,7 @@ Phase Release image:
 ######    SCAN DE SECURITE - SNYK ###############
 #############################################################
 Phase Scan securite:
-  stage: Scan Securite
+  stage: Test
   script:
     - docker run --rm -e SNYK_TOKEN=$SNYK_TOKEN
         -v /var/run/docker.sock:/var/run/docker.sock
