@@ -40,7 +40,7 @@ stages:
   - Deploy review
   - Stop review
   - Deploy staging
-#  - Test staging
+  - Test staging
   - Deploy pre-prod
   - Test pre-prod
   - Deploy prod
