@@ -18,6 +18,7 @@ variables:
 
   IMAGE_TAG: main
 
+  STAGING_IP: 192.168.99.10
   PREPROD_IP: 192.168.99.20
   PROD_IP: 192.168.99.30
   SSH_USER: vagrant
@@ -165,20 +166,34 @@ Phase Stop review:
 #############################################################
 ######  DEPLOIEMENT SUR STAGING HEROKU #########
 #############################################################
+#Phase Deploy staging:
+#  stage: Deploy staging
+#  environment:
+#    name: staging
+#    url: https://ibdevops4amn-staging.herokuapp.com
+#  only:
+#    - main
+#  script:
+#    - apk --no-cache add npm
+#    - npm install -g heroku
+#    - heroku container:login
+#    - heroku create ibdevops4amn-staging || echo "project already exist"
+#    - heroku container:push --app ibdevops4amn-staging web
+#    - heroku container:release --app ibdevops4amn-staging web
+
+
+#############################################################
+######  DEPLOIEMENT SUR STAGING #########
+#############################################################
 Phase Deploy staging:
   stage: Deploy staging
-  environment:
-    name: staging
-    url: https://ibdevops4amn-staging.herokuapp.com
-  only:
-    - main
+  tags:
+    - ib-bdx
+    - staging
+    - docker
   script:
-    - apk --no-cache add npm
-    - npm install -g heroku
-    - heroku container:login
-    - heroku create ibdevops4amn-staging || echo "project already exist"
-    - heroku container:push --app ibdevops4amn-staging web
-    - heroku container:release --app ibdevops4amn-staging web
+    - docker container stop webtweet || true
+    - docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main
 
 
 #############################################################
@@ -190,18 +205,10 @@ Phase Deploy pre-prod:
     - ib-bdx
     - staging
     - shell
-  variables:
-    registry: '${REGISTRY}'
-    repository: '${REPOSITORY}'
-    IMAGE_TAG: '${IMAGE_TAG}'
   script:
     - ssh $SSH_USER@$PREPROD_IP 'echo Welcome on $HOSTNAME'
-#    - scp /tmp/webtweet_latest.tar $SSH_USER@$PREPROD_IP:/tmp/
-#    - ssh $SSH_USER@$PREPROD_IP 'docker load < /tmp/webtweet_latest.tar'
     - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
-#    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
-
-    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main' # $registry/$repository:$image_tag
+    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main'
 
 
 #############################################################
@@ -215,10 +222,8 @@ Phase Deploy prod:
     - shell
   script:
     - ssh $SSH_USER@$PROD_IP 'echo Welcome on $HOSTNAME'
-    - scp /tmp/webtweet_latest.tar $SSH_USER@$PROD_IP:/tmp/
-    - ssh $SSH_USER@$PROD_IP 'docker load < /tmp/webtweet_latest.tar'
     - ssh $SSH_USER@$PROD_IP 'docker container stop webtweet || true'
-    - ssh $SSH_USER@$PROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
+    - ssh $SSH_USER@$PROD_IP 'docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main'
 
 
 #############################################################
@@ -230,6 +235,13 @@ Phase Deploy prod:
 #  stage: Test staging
 #  variables:
 #    DOMAIN: ibdevops4amn-staging.herokuapp.com
+
+Phase de Test staging:
+  <<: *test_local
+  stage: Test staging
+  variables:
+    IP: $STAGING_IP
+    PORT: $EXTERN_PORT
 
 Phase de Test pre-prod:
   <<: *test_local
