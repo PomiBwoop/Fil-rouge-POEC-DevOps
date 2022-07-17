@@ -105,6 +105,7 @@ Phase Release image:
   script:
     - docker load < webtweet.tar
     - docker tag webtweet:latest "$REGISTRY/$REPOSITORY:${CI_COMMIT_REF_NAME}"
+    - docker tag webtweet:latest "$REGISTRY/webtweet:latest"
 #    - docker tag webtweet "$REGISTRY/$REPOSITORY:${CI_COMMIT_SHORT_SHA}"
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker push "$REGISTRY/$REPOSITORY:${CI_COMMIT_REF_NAME}"
@@ -164,25 +165,6 @@ Phase Stop review:
 
 
 #############################################################
-######  DEPLOIEMENT SUR STAGING HEROKU #########
-#############################################################
-#Phase Deploy staging:
-#  stage: Deploy staging
-#  environment:
-#    name: staging
-#    url: https://ibdevops4amn-staging.herokuapp.com
-#  only:
-#    - main
-#  script:
-#    - apk --no-cache add npm
-#    - npm install -g heroku
-#    - heroku container:login
-#    - heroku create ibdevops4amn-staging || echo "project already exist"
-#    - heroku container:push --app ibdevops4amn-staging web
-#    - heroku container:release --app ibdevops4amn-staging web
-
-
-#############################################################
 ######  DEPLOIEMENT SUR STAGING #########
 #############################################################
 Phase Deploy staging:
@@ -229,12 +211,6 @@ Phase Deploy prod:
 #############################################################
 ######  3 PHASES TESTS POUR STAING PREPROD ET PROD ##########
 #############################################################
-
-#Phase de Test staging:
-#  <<: *test
-#  stage: Test staging
-#  variables:
-#    DOMAIN: ibdevops4amn-staging.herokuapp.com
 
 Phase de Test staging:
   <<: *test_local
