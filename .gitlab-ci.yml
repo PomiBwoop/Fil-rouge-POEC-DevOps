@@ -197,7 +197,7 @@ Phase Deploy pre-prod:
 #    - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
 #    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
 
-    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet $REGISTRY/REPOSITORY:$IMAGE_TAG'
+    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet $REGISTRY/$REPOSITORY:$IMAGE_TAG'
 
 
 #############################################################
