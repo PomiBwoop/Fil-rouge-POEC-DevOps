@@ -190,14 +190,18 @@ Phase Deploy pre-prod:
     - ib-bdx
     - staging
     - shell
+  variables:
+    registry: '${REGISTRY}'
+    repository: '${REPOSITORY}'
+    image_tag: '${IMAGE_TAG}'
   script:
     - ssh $SSH_USER@$PREPROD_IP 'echo Welcome on $HOSTNAME'
 #    - scp /tmp/webtweet_latest.tar $SSH_USER@$PREPROD_IP:/tmp/
 #    - ssh $SSH_USER@$PREPROD_IP 'docker load < /tmp/webtweet_latest.tar'
-#    - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
+    - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
 #    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet webtweet:latest'
 
-    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet $REGISTRY/$REPOSITORY:$IMAGE_TAG'
+    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet $registry/$repository:$image_tag'
 
 
 #############################################################
