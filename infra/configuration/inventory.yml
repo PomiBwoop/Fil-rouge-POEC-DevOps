@@ -1,0 +1,14 @@
+all:
+  hosts:
+    manager:
+    monitoring:
+    staging:
+    preprod:
+    prod:
+  children:
+    docker:
+      hosts:
+        staging:
+        preprod:
+        prod:
+        monitoring:

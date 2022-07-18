@@ -1,0 +1,6 @@
+---
+- name: "Download the version {{ docker_compose_version }}"
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/v{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: ug+x

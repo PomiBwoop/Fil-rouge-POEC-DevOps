@@ -1,0 +1,24 @@
+---
+- name: "Add Docker repository key"
+  ansible.builtin.shell: curl -sL https://download.docker.com/linux/debian/gpg | gpg --dearmor | tee /usr/share/keyrings/docker-archive-keyring.gpg >/dev/null
+  args:
+    warn: false
+
+- name: "Add Docker repository"
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+
+- name: "Install docker's packages"
+  apt:
+    pkg:
+      - docker-ce 
+      - docker-ce-cli 
+      - containerd.io
+    update_cache: yes
+    state: present
+
+- name: "Add vagrant user to docker group"
+  ansible.builtin.user:
+    name: vagrant
+    groups: 
+      - docker

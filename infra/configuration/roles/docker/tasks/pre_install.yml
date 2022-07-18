@@ -1,0 +1,13 @@
+---
+- name: "Update package's list and install requirements"
+  apt:
+    pkg: 
+    - curl
+    #- gpg
+    #- gnupg 
+    - gnupg2
+    - apt-transport-https 
+    - ca-certificates 
+    #- lsb-release
+    update_cache: yes
+    state: present
