@@ -64,7 +64,7 @@ stages:
     - staging
     - shell
   script:
-    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.17.0.4:80" | grep "200" # Si code 200 => succès
+#    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://172.17.0.4:80" | grep "200" # Si code 200 => succès
 
 
 
