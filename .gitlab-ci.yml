@@ -93,6 +93,7 @@ Phase Test acceptance:
     - sleep 5
     - docker container exec webtweet "ifconfig"
     - apk --no-cache add curl
+    - curl -o /dev/null --silent --head --write-out '%{http_code}\n' "http://192.17.0.3:80" | grep "200" # Si code 200 => succès
     #- curl "http://docker" | grep "Linux Tweet App!"
     - docker stop webtweet
 
