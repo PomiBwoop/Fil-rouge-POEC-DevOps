@@ -188,7 +188,8 @@ Phase Deploy pre-prod:
   script:
     - ssh $SSH_USER@$PREPROD_IP 'echo Welcome on $HOSTNAME'
     - ssh $SSH_USER@$PREPROD_IP 'docker container stop webtweet || true'
-    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main'
+#    - ssh $SSH_USER@$PREPROD_IP 'docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main'
+    - ssh $SSH_USER@$PREPROD_IP "docker run --rm -d -p 8080:80 --name webtweet $REGISTRY/$REPOSITORY:$IMAGE_TAG"
 
 
 #############################################################
