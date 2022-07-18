@@ -135,8 +135,8 @@ Phase deploy review:
     name: review/$CI_COMMIT_REF_NAME
     url: https://ibdevops4amn-$CI_COMMIT_REF_NAME.herokuapp.com
     on_stop: Phase Stop review # see de label Phase Stop review BELOW
-  only:
-    - merge_requests
+#  only:
+#    - merge_requests
   script:
     - apk --no-cache add npm
     - npm install -g heroku
@@ -156,8 +156,8 @@ Phase Stop review:
   environment:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
-  only:
-    - merge_requests
+#  only:
+#    - merge_requests
   when: manual
   script:
 #    - apk --no-cache add npm
@@ -181,8 +181,8 @@ Phase Deploy staging:
     name: review/$CI_COMMIT_REF_NAME
   #  url: https://ibdevops4amn-$CI_COMMIT_REF_NAME.herokuapp.com
     on_stop: Phase Stop review # see de label Phase Stop review BELOW
-  only:
-    - merge_requests
+#  only:
+#    - merge_requests
   script:
     - docker container stop webtweet || true
     - docker run --rm -d -p 8080:80 --name webtweet registry.gitlab.com/rmaziere/fil-rouge-devops:main
