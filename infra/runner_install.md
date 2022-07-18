@@ -36,37 +36,76 @@ Il faut spécifier notre token gitlab pour lier le runner local à gitlab.
 ```sh
 GITLAB_RUNNER_TOKEN=GR1348941zgLYXgM32gTfBuyWAgvY
 
-sudo gitlab-runner register --url https://gitlab.com/ \
-    --registration-token "GR1348941zgLYXgM32gTfBuyWAgvY" \
-    --tag-list "docker,alpine,ib-bdx" \
+sudo gitlab-runner register \
+    --url https://gitlab.com/ \
+    --registration-token "$GITLAB_RUNNER_TOKEN" \
+    --tag-list "docker,staging,ib-bdx" \
     --name "staging" \
     --executor "docker" \
-    --docker-image "alpine:latest"
+    --docker-host 127.0.0.1:2375 \
+    --docker-privileged=true \
+    --docker-image "docker:latest"
+
+sudo gitlab-runner register -n \
+    --url https://gitlab.com/ \
+    --registration-token "$GITLAB_RUNNER_TOKEN" \
+    --tag-list "shell,staging,ib-bdx" \
+    --name "staging" \
+    --executor "shell" \
+    --shell "bash"
 ```
 
-Il faut ensuite renseigner en mode interactif les propriétés de notre `runner` :
+Modification du nombre de concurrents
 
-```log
-Runtime platform                                    arch=amd64 os=linux pid=1068 revision=76984217 version=15.1.0
-Running in system-mode.
-
-Enter the GitLab instance URL (for example, https://gitlab.com/):
-[https://gitlab.com/]:
-Enter the registration token:
-[GR1348941zgLYXgM32gTfBuyWAgvY]:
-Enter a description for the runner:
-[staging]:
-Enter tags for the runner (comma-separated):
-vm,debian,devops,ib-bdx
-Enter optional maintenance note for the runner:
-
-Registering runner... succeeded                     runner=GR1348941vjTQ2i8S
-Enter an executor: parallels, ssh, virtualbox, docker+machine, docker, docker-ssh, shell, docker-ssh+machine, kubernetes, custom:
-docker
-Enter the default Docker image (for example, ruby:2.7):
-alpine:latest
-Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
+```sh
+sed -i 's/concurrent = 1/concurrent = 5/g' /etc/gitlab-runner/config.toml
 ```
+
+Le contenu final du fichier de configuration
+
+```sh
+sudo cat /etc/gitlab-runner/config.toml
+concurrent = 3
+check_interval = 0
+
+[session_server]
+  listen_address = "7.tcp.eu.ngrok.io:10604"
+  session_timeout = 1800
+
+[[runners]]
+  name = "staging"
+  url = "https://gitlab.com/"
+  token = "Fmj63WGJM8zyy5iS5Gky"
+  executor = "docker"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+  [runners.docker]
+    host = "unix:///var/run/docker.sock"
+    tls_verify = false
+    image = "docker:latest"
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+    shm_size = 0
+
+[[runners]]
+  name = "staging"
+  url = "https://gitlab.com/"
+  token = "UPuRmgHsLztg-7wfgE_g"
+  executor = "shell"
+  shell = "bash"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+```
+
 
 ## Verification dans Gitlab.com que le runner est bien déclaré et opérationnel
 
@@ -82,6 +121,7 @@ Pour utiliser notre runner lors de l'exécution du pipeline, il faut spécifier 
 job:
   tags:
     - docker
+    - staging
     - ib-bdx
 ```
 
