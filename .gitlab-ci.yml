@@ -1,3 +1,5 @@
+image: docker:latest
+
 #############################################################
 ###### VARIABLES & MISE EN OEUVRE DOCKER IN DOCKER ##########
 #############################################################
@@ -8,6 +10,10 @@ default:
     - docker
 
 variables:
+  DOCKER_HOST: tcp://docker:2375
+  # This instructs Docker not to start over TLS.
+  DOCKER_TLS_CERTDIR: ""
+
   REGISTRY: registry.gitlab.com/rmaziere
   REPOSITORY: fil-rouge-devops
   CONTAINER_NAME: webtweet
@@ -23,11 +29,13 @@ variables:
   PROD_IP: 192.168.99.30
   SSH_USER: vagrant
 
-image: docker:latest
+
 services:
   - name: docker:dind
     alias: docker
 
+before_script:
+  - docker info
 
 #############################################################
 ######     DIFFERENTES ETAPES DE LA CI-CD   #################
